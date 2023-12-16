@@ -66,3 +66,10 @@ window.onload = function() {
         country.appendChild(el);
     }
 }
+
+submitBtn = document.getElementById("submitBtn");
+
+submitBtn.addEventListener("click", function() {
+    alert("Thank you for your submission!")
+})
+

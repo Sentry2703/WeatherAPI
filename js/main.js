@@ -128,14 +128,18 @@ window.onload = function() {
     }
 }
 
-submitBtn = document.getElementById("submitBtn");
-
-APICall = function() {
+APICall = async function() {
     console.log(country.selectedIndex);
-    url = "http://www.7timer.info/bin/api.pl?lon=" + locationArr[country.selectedIndex - 1].lon + "&lat=" + locationArr[country.selectedIndex - 1].lat + "&product=civillight&output=json";
+    const url = "http://www.7timer.info/bin/api.pl?lon=" + locationArr[country.selectedIndex - 1].lon + "&lat=" + locationArr[country.selectedIndex - 1].lat + "&product=civillight&output=json";
     console.log(url);
-    window.open(url, "_blank");
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data)
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-submitBtn.addEventListener("click", APICall)
+country.addEventListener("change", APICall)
 

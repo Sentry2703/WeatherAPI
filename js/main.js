@@ -1,61 +1,3 @@
-var locations = {"Countries": 
-["Amsterdam, Netherlands",
-"Ankara, Turkey",
-"Åstorp, Sweden",
-"Athens, Greece",
-"Belfast, Northern Ireland",
-"Barcelona, Spain",
-"Berlin, Germany",
-"Bern, Switzerland",
-"Bilbao, Spain",
-"Brussels, Belgium",
-"Bucharest, Romania",
-"Budapest, Hungary",
-"Cardiff, Wales",
-"Cologne, Germany",
-"Copenhagen, Denmark",
-"Cork, Ireland",
-"Dublin, Ireland",
-"Edinburgh, Scotland",
-"Florence, Italy",
-"Frankfurt, Germany",
-"French Riviera, France",
-"Funchal, Portugual",
-"Gibraltar",
-"Gothenburg, Sweden",
-"Hamburg, Germany",
-"Helsinki, Finland",
-"Ibiza, Spain",
-"Kyiv, Ukraine",
-"Lillehammer, Norway",
-"Lisbon, Portugual",
-"London, England",
-"Madrid, Spain",
-"Mallorca, Spain",
-"Manchester, England",
-"Marseille, France",
-"Maspalomas, Spain",
-"Milan, Italy",
-"Munich, Germany",
-"Naples, Italy",
-"Oñati, Spain",
-"Oslo, Norway",
-"Paris, France",
-"Prague, Czech Republic",
-"Reykjavík, Iceland",
-"Riga, Latvia",
-"Rome, Italy",
-"Santa Cruz das Flores, Portugual",
-"Santa Cruz de Tenerife, Spain",
-"Skye, Scotland",
-"Sofia, Bulgaria",
-"Stockholm, Sweden",
-"Tallinn, Estonia",
-"Vienna, Austria",
-"Warsaw, Poland",
-"York, England",
-"Zurich, Switzerland"]}
-
 var locationArr = 
 [
     { "lat": 52.367, "lon": 4.904, "city": "Amsterdam", "country": "Netherlands"},
@@ -129,13 +71,44 @@ window.onload = function() {
 }
 
 APICall = async function() {
+    const dataDisplay = document.getElementById("dataDisplay");
     console.log(country.selectedIndex);
+    if (country.selectedIndex == 0) {
+        for (i = 0; i < 7; i++) {
+            const card = document.getElementById("card" + i);
+            card.innerHTML = "";
+        }
+        return;
+    }
     const url = "http://www.7timer.info/bin/api.pl?lon=" + locationArr[country.selectedIndex - 1].lon + "&lat=" + locationArr[country.selectedIndex - 1].lat + "&product=civillight&output=json";
     console.log(url);
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log(data)
+        console.log(data);
+        console.log(data.dataseries);
+
+        const options = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric' };
+        
+        for (i = 0; i < data.dataseries.length; i++) {
+            element = data.dataseries[i];
+            var date = new Date(element.date.toString().slice(0,4), element.date.toString().slice(4,6) - 1, element.date.toString().slice(6,8));
+            date = date.toLocaleDateString("en-US", options);
+            var weather = element.weather;
+            var maxtemp = element.temp2m.max;
+            var mintemp = element.temp2m.min;
+            var wind = element.wind10m_max;
+            
+
+            const card = document.getElementById("card" + i);
+            card.innerHTML = `<p>${date}</p>\
+                                <p>${weather}</p>\
+                                <img src="images/${weather}.png" alt="${weather}">\
+                                <p>Max Temp: ${maxtemp}°C</p>\
+                                <p>Min Temp: ${mintemp}°C</p>\
+                                <p>Max Wind: ${wind}km/h</p>
+                                `;
+        }
     } catch (error) {
         console.log(error);
     }
